@@ -47,17 +47,20 @@ uint32_t ring_buf_get_size_to_read(ring_buf_t *buf);
  * @brief Write data into buffer
  * @param[in] buf Pointer to holder buffer
  * @param[in] msg Data write to buffer
+ * @retval TRUE Write data to buffer succeed
+ *         FALSE Write data to buffer failed, maybe ring buffer is full
  * @Note Please check buffer free before write
  */
-void ring_buf_write(ring_buf_t *buf, ring_buf_data_t * msg);
+bool ring_buf_write(ring_buf_t *buf, ring_buf_data_t * msg);
 
 /**
  * @brief Read data from buffer
  * @param[in] buf Pointer to holder buffer
  * @param[in] msg Data read to buffer
- * @Note Please check ring_buf_get_size_to_read before read action
+ * @retval TRUE Read data from buffer succeed
+ *         FALSE Read data from buffer failed, maybe ring buffer is empty
  */
-void ring_buf_read(ring_buf_t *buf, ring_buf_data_t * msg);
+bool ring_buf_read(ring_buf_t *buf, ring_buf_data_t * msg);
 
 /**
  * @brief Skip data in buffer (increase read index data in buffer)

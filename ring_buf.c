@@ -35,8 +35,13 @@ uint32_t ring_buf_get_size_to_read(ring_buf_t *buf)
     }
 }
 
-void ring_buf_write(ring_buf_t *buf, ring_buf_data_t * msg)
+bool ring_buf_write(ring_buf_t *buf, ring_buf_data_t * msg)
 {   
+    if (ring_buf_get_free(buf) == 0)
+    {
+        return false;
+    }
+
     buf->buff[buf->wrIdx].len = msg->len;
     memcpy(buf->buff[buf->wrIdx].data, msg->data, msg->len);
 
@@ -44,10 +49,17 @@ void ring_buf_write(ring_buf_t *buf, ring_buf_data_t * msg)
 
     if (buf->wrIdx >= buf->size)
         buf->wrIdx = 0;
+
+    return true;
 }
 
-void ring_buf_read(ring_buf_t *buf, ring_buf_data_t * msg)
+bool ring_buf_read(ring_buf_t *buf, ring_buf_data_t * msg)
 {
+    if (ring_buf_get_size_to_read(buf) == 0)
+    {
+        return false;
+    }
+
     uint32_t idx = buf->rdIdx;
     
     msg->len = buf->buff[buf->rdIdx].len;
@@ -57,6 +69,8 @@ void ring_buf_read(ring_buf_t *buf, ring_buf_data_t * msg)
     
     if (buf->rdIdx >= buf->size)
         buf->rdIdx = 0;
+
+    return true;
 }
 
 void ring_buf_skip(ring_buf_t *buf, uint32_t skip_cnt)
