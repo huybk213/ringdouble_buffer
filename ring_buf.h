@@ -24,8 +24,8 @@ typedef struct
 typedef struct
 {
     ring_buf_data_t * buff;
-    uint32_t wrIdx; // write index
-    uint32_t rdIdx; // read index
+    uint32_t wr_idx; // write index
+    uint32_t rd_idx; // read index
     uint32_t size;
 } ring_buf_t;
 

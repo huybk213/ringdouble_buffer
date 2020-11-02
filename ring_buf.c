@@ -3,17 +3,17 @@
 uint32_t ring_buf_get_free(ring_buf_t *buf)
 {
     uint32_t size;
-    if (buf->wrIdx == buf->rdIdx)
+    if (buf->wr_idx == buf->rd_idx)
     {
         size = buf->size;
     }
-    else if (buf->rdIdx > buf->wrIdx)
+    else if (buf->rd_idx > buf->wr_idx)
     {
-        size = buf->rdIdx - buf->wrIdx;
+        size = buf->rd_idx - buf->wr_idx;
     }
     else
     {
-        size = buf->size - buf->wrIdx + buf->rdIdx;
+        size = buf->size - buf->wr_idx + buf->rd_idx;
     }
     
     return size - 1;
@@ -21,17 +21,17 @@ uint32_t ring_buf_get_free(ring_buf_t *buf)
 
 uint32_t ring_buf_get_size_to_read(ring_buf_t *buf)
 {
-    if (buf->wrIdx == buf->rdIdx) 
+    if (buf->wr_idx == buf->rd_idx) 
     {
         return 0;
     } 
-    else if (buf->wrIdx > buf->rdIdx) 
+    else if (buf->wr_idx > buf->rd_idx) 
     {
-        return (buf->wrIdx - buf->rdIdx);
+        return (buf->wr_idx - buf->rd_idx);
     } 
     else 
     {
-        return (buf->size - buf->rdIdx  + buf->wrIdx);
+        return (buf->size - buf->rd_idx  + buf->wr_idx);
     }
 }
 
@@ -42,13 +42,13 @@ bool ring_buf_write(ring_buf_t *buf, ring_buf_data_t * msg)
         return false;
     }
 
-    buf->buff[buf->wrIdx].len = msg->len;
-    memcpy(buf->buff[buf->wrIdx].data, msg->data, msg->len);
+    buf->buff[buf->wr_idx].len = msg->len;
+    memcpy(buf->buff[buf->wr_idx].data, msg->data, msg->len);
 
-    buf->wrIdx += 1;
+    buf->wr_idx += 1;
 
-    if (buf->wrIdx >= buf->size)
-        buf->wrIdx = 0;
+    if (buf->wr_idx >= buf->size)
+        buf->wr_idx = 0;
 
     return true;
 }
@@ -60,15 +60,15 @@ bool ring_buf_read(ring_buf_t *buf, ring_buf_data_t * msg)
         return false;
     }
 
-    uint32_t idx = buf->rdIdx;
+    uint32_t idx = buf->rd_idx;
     
-    msg->len = buf->buff[buf->rdIdx].len;
-    memcpy(msg->data, buf->buff[buf->rdIdx].data, msg->len);
+    msg->len = buf->buff[buf->rd_idx].len;
+    memcpy(msg->data, buf->buff[buf->rd_idx].data, msg->len);
 
-    buf->rdIdx += 1;
+    buf->rd_idx += 1;
     
-    if (buf->rdIdx >= buf->size)
-        buf->rdIdx = 0;
+    if (buf->rd_idx >= buf->size)
+        buf->rd_idx = 0;
 
     return true;
 }
@@ -82,8 +82,8 @@ void ring_buf_skip(ring_buf_t *buf, uint32_t skip_cnt)
     
     for (uint32_t i = 0; i < skip_cnt;i++)
     {
-        buf->rdIdx += 1;   
-        if (buf->rdIdx >= buf->size)
-            buf->rdIdx = 0;
+        buf->rd_idx += 1;   
+        if (buf->rd_idx >= buf->size)
+            buf->rd_idx = 0;
     }
 }
